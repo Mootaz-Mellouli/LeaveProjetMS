@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="conge")
 public class Leave {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,5 @@ public class Leave {
     /*@ManyToOne
     private User user;*/
     private boolean isArchived;
-    //private LeaveType leaveType;
-    private Boolean teamAvailability;
+    private boolean teamAvailability;
 }
