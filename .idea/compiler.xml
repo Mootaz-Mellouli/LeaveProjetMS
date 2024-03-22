@@ -10,10 +10,6 @@
         <module name="LeaveMS" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="EventMS" target="17" />
-      <module name="LeaveMS" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
