@@ -1,0 +1,85 @@
+version: "2.2"
+services:
+
+  user-ms:
+    container_name: user-ms
+    build:
+      context: ./UserMS
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - mysql-db
+
+  team-ms:
+    container_name: team-ms
+    build:
+      context: ./TeamMS
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    depends_on:
+      - eureka-server
+      - postgresql-db
+
+  leave-ms:
+    container_name: leave-ms
+    build:
+      context: ./LeaveMS
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+      - mongo-db
+
+  event-ms:
+    container_name: event-ms
+    build:
+      context: ./EventMS
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+      - h2-db
+
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./EurekaServer
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - h2-db
+
+  mysql-db:
+    container_name: mysql-db
+    image: mysql:5.6
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: users
+
+  postgresql-db:
+    container_name: postgresql-db
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: saif9782536
+      POSTGRES_DB: teams
+
+  mongo-db:
+    container_name: mongo-db
+    image: mongo:5-focal
+    ports:
+      - "27017:27017"
+
+  h2-db:
+    container_name: h2-db
+    image: openjdk:17
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_H2_CONSOLE_ENABLED=true
