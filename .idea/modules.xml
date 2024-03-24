@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/EurekaServer/EurekaServer.iml" filepath="$PROJECT_DIR$/EurekaServer/EurekaServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/EventMS/EventMS.iml" filepath="$PROJECT_DIR$/EventMS/EventMS.iml" />
       <module fileurl="file://$PROJECT_DIR$/LeaveMS/LeaveMS.iml" filepath="$PROJECT_DIR$/LeaveMS/LeaveMS.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/LeaveProjetMS.iml" filepath="$PROJECT_DIR$/.idea/LeaveProjetMS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TeamMS/TeamMS.iml" filepath="$PROJECT_DIR$/TeamMS/TeamMS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UserMS/UserMS.iml" filepath="$PROJECT_DIR$/UserMS/UserMS.iml" />
     </modules>
   </component>
 </project>
