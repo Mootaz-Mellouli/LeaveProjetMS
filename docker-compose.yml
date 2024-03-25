@@ -97,3 +97,53 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: saif9782536
       POSTGRES_DB: TeamDB
+  gateway:
+    container_name: gateway
+    build:
+      context: ./Gateway
+      dockerfile: Dockerfile
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+    ports:
+      - "8086:8086"
+    depends_on:
+      - eureka-server
+  www_symfony:
+    build: ./ClaimMS
+    depends_on:
+      - postgresql
+      - eureka-server
+    container_name: www_symfony
+    restart: always
+    ports:
+      - '8000:8000'
+    dns:
+      - 8.8.8.8
+    volumes:
+      - ./:/var/www/
+    command: "symfony server:start"
+    networks:
+      - rr-net
+
+
+  postgresql:
+    image: postgres:${POSTGRES_VERSION:-14}-alpine
+    container_name: postgresql_symfony
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    ports:
+      - 5433:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data:rw
+    networks:
+      - rr-net
+networks:
+  rr-net:
+    driver: bridge
+
+volumes:
+  db-data:
