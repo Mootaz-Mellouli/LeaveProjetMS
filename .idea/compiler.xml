@@ -11,21 +11,16 @@
         <module name="UserMS" />
         <module name="EventMS" />
         <module name="LeaveMS" />
+        <module name="Gateway" />
         <module name="TeamMS" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="EurekaServer" target="17" />
-      <module name="EventMS" target="17" />
-      <module name="LeaveMS" target="17" />
-      <module name="TeamMS" target="17" />
-      <module name="UserMS" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="EurekaServer" options="-parameters" />
       <module name="EventMS" options="-parameters" />
+      <module name="Gateway" options="-parameters" />
       <module name="LeaveMS" options="-parameters" />
       <module name="TeamMS" options="-parameters" />
       <module name="UserMS" options="-parameters" />
