@@ -1,39 +1,36 @@
 version: "2.2"
 services:
 
-  user-ms:
-    container_name: user-ms
-    build:
-      context: ./UserMS
-      dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
-    depends_on:
-      - eureka-server
-      - mysql-db
-
-  team-ms:
-    container_name: team-ms
-    build:
-      context: ./TeamMS
-      dockerfile: Dockerfile
-    ports:
-      - "8088:8088"
-    depends_on:
-      - eureka-server
-      - postgresql-db
-
   leave-ms:
     container_name: leave-ms
     build:
       context: ./LeaveMS
       dockerfile: Dockerfile
+    environment:
+        - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+        - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/leavemsdb?createDatabaseIfNotExist=true
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=
     ports:
       - "8085:8085"
     depends_on:
       - eureka-server
-      - mongo-db
-
+      - mysql-db
+  user-ms:
+    container_name: user-ms
+    build:
+      context: ./UserMS
+      dockerfile: Dockerfile
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db-1:3306/users?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - mysql-db
   event-ms:
     container_name: event-ms
     build:
@@ -44,38 +41,46 @@ services:
     depends_on:
       - eureka-server
       - h2-db
-
+  team-ms:
+    container_name: team-ms
+    build:
+      context: ./TeamMS
+      dockerfile: Dockerfile
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql-db:5432/TeamDB
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=saif9782536
+    ports:
+      - "8088:8088"
+    depends_on:
+      - eureka-server
+      - postgresql-db
   eureka-server:
     container_name: eureka-server
     build:
       context: ./EurekaServer
       dockerfile: Dockerfile
     ports:
-      - "8083:8083"
+      - "8761:8761"
     depends_on:
       - h2-db
-
   mysql-db:
     container_name: mysql-db
     image: mysql:5.6
-    environment:
-      MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE: users
-
-  postgresql-db:
-    container_name: postgresql-db
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: saif9782536
-      POSTGRES_DB: teams
-
-  mongo-db:
-    container_name: mongo-db
-    image: mongo:5-focal
     ports:
-      - "27017:27017"
-
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: leavemsdb
+  mysql-db-1:
+    container_name: mysql-db-1
+    image: mysql:5.6
+    ports:
+      - "3304:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: users
   h2-db:
     container_name: h2-db
     image: openjdk:17
@@ -83,3 +88,12 @@ services:
       - "8084:8084"
     environment:
       - SPRING_H2_CONSOLE_ENABLED=true
+  postgresql-db:
+    container_name: postgresql-db
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: saif9782536
+      POSTGRES_DB: TeamDB
