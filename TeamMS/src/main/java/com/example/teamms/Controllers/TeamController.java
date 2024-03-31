@@ -1,16 +1,18 @@
 package com.example.teamms.Controllers;
 
+import com.example.teamms.Entities.Leave;
 import com.example.teamms.Entities.Team;
 import com.example.teamms.Services.ITeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/team")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class TeamController {
     private final ITeamService teamService;
     @GetMapping()
@@ -19,7 +21,7 @@ public class TeamController {
     }
 
     @GetMapping("/{team-id}")
-    public Team retrieveTeam(@PathVariable("team-id") Integer teamId) {
+    public Optional<Team> retrieveTeam(@PathVariable("team-id") Integer teamId) {
         return teamService.retrieveTeam(teamId);
     }
 
@@ -39,16 +41,16 @@ public class TeamController {
         teamService.archiveTeam(teamId);
     }
 
-    /*@PutMapping("/{user-id}/{team-id}")
-    public void affectUserToTeam(@PathVariable("user-id") Integer userid,@PathVariable("team-id") Integer teamId) {
+    @PutMapping("/{user-id}/{team-id}")
+    public void affectUserToTeam(@PathVariable("user-id") String userid,@PathVariable("team-id") Integer teamId) {
         teamService.affectUserToTeam(userid,teamId);
     }
     @PutMapping("/desaffectUserToTeam/{user-id}/{team-id}")
-    public void desaffectUserToTeam(@PathVariable("user-id") Integer userid,@PathVariable("team-id") Integer teamId) {
+    public void desaffectUserToTeam(@PathVariable("user-id") String userid,@PathVariable("team-id") Integer teamId) {
         teamService.desaffectUserFromTeam(userid,teamId);
     }
     @GetMapping("/retrieveLeavesByTeam/{team-id}")
     public List<Leave> retrieveLeavesByTeam(@PathVariable("team-id") Integer teamId) {
         return teamService.getLeavesByTeam(teamId);
-    }*/
+    }
 }

@@ -1,5 +1,6 @@
 package com.leave.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.Date;
 import lombok.*;
@@ -23,8 +24,11 @@ public class Leave {
     private Date createdAt;
     @Enumerated(EnumType.STRING)
     private LeaveType leaveType;
-    /*@ManyToOne
-    private User user;*/
+    @ManyToOne
+    @Transient
+    private User user;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String matriculeUser;
     private boolean isArchived;
     private boolean teamAvailability;
 }

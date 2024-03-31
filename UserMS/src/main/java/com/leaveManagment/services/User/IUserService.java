@@ -6,6 +6,7 @@ import com.leaveManagment.entities.Leave;
 import com.leaveManagment.entities.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IUserService {
     List<User> retrieveAllUsers();
@@ -14,10 +15,11 @@ public interface IUserService {
 
     User updateUser (User u);
 
-    User retrieveUser (String matricule);
+    Optional<User> retrieveUser (String matricule);
 
     void deleteUser(String matricule);
     List<Leave> getLeavesByUser(String matricule);
     AuthResponseDTO loginUser(LoginDTO loginDTO);
     User getCurrentUser();
+    //List<User> retrieveUsersByTeam(Integer teamId);
 }

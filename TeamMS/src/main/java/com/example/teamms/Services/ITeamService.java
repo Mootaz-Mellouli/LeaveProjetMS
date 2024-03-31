@@ -4,6 +4,7 @@ import com.example.teamms.Entities.Leave;
 import com.example.teamms.Entities.Team;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ITeamService {
     List<Team> retrieveAllTeams();
@@ -12,10 +13,10 @@ public interface ITeamService {
 
     Team updateTeam (Team t);
 
-    Team retrieveTeam (Integer idETeam);
+    Optional<Team> retrieveTeam (Integer idETeam);
 
     void archiveTeam(Integer idTeam);
-   /*void affectUserToTeam(Integer idUser,Integer idTeam);
-    void desaffectUserFromTeam(Integer idUser,Integer idTeam);
-    List<Leave> getLeavesByTeam(Integer idTeam);*/
+   void affectUserToTeam(String  idUser,Integer idTeam);
+    void desaffectUserFromTeam(String idUser,Integer idTeam);
+    List<Leave> getLeavesByTeam(Integer idTeam);
 }

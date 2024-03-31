@@ -1,4 +1,4 @@
-package com.example.teamms.Entities;
+package com.leave.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Utilisateur {
+public class User {
     @Id
     private String matricule;
     private String firstName;
@@ -43,7 +43,7 @@ public class Utilisateur {
     @JoinColumn(name = "team_id")
     private Team teamUser;
     private Integer teamUserID;
-    @OneToMany(mappedBy = "utilisateurClaim")
+    @OneToMany(mappedBy = "userClaim")
     @JsonIgnore
     private List<Claim> claim;
     @OneToOne

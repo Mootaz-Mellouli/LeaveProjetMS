@@ -17,8 +17,8 @@ class ClaimController extends AbstractController
     public function index(): JsonResponse
     {
         $client = new EurekaClient([
-            'eurekaDefaultUrl' => 'http://localhost:8761/eureka',
-            'hostName' => 'localhost',
+            'eurekaDefaultUrl' => 'http://eureka-server:8761/eureka',
+            'hostName' => 'www_symfony',
             'appName' => 'ClaimMS',
             'ip' => '127.0.0.1',
             'port' => ['8000', true]

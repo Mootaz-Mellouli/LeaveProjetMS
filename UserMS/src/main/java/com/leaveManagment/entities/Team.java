@@ -24,10 +24,12 @@ public class Team {
     private String description;
     private boolean archive;
     private Date createdOn;
-    @OneToMany(mappedBy = "teamUser")
+    @OneToMany
+    @JsonIgnore
     private List<User> userList;
 
     @OneToOne
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "team")

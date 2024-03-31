@@ -32,8 +32,7 @@ public class LeaveController {
     }
     @PutMapping("/update/{matricule}")
     public Leave updateLeave(@RequestBody Leave leave,@PathVariable String matricule) {
-        return null;
-        //return leaveService.updateLeave(leave, matricule);
+        return leaveService.updateLeave(leave, matricule);
     }
     @DeleteMapping("/delete/{idLeave}")
     public void deleteLeave(@PathVariable int idLeave) {
@@ -52,7 +51,6 @@ public class LeaveController {
     //@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/me/{matricule}")
     public List<Leave> getLeavesByUser(@PathVariable String matricule) {
-        return null;
-        //return leaveService.getLeavesByUser(matricule);
+        return leaveService.getLeavesByUser(matricule);
     }
 }

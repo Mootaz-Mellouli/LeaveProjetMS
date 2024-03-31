@@ -19,12 +19,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findUsersByArchiveDateBefore(LocalDate date);
     @Query("select u from User u where u.isArchive = false")
     List<User> findAllByIsArchiveFalse();
-
-
+    /*@Query("select u from User u where u.teamId = ?1")
+    List<User> findByTeamId(Integer teamId);*/
+/*
     @Query("select u from User u inner join u.leaves leaves " +
             "where u.teamUser = ?1 and leaves.startDate < ?2 and leaves.endDate > ?3")
     List<User> findUsersByTeamUserAndLeavesStartDateGreaterThanAndLeavesEndDateLessThan(Team team, Date startDate, Date endDate);
 
     @Query("select u from User u where u.teamUser = ?1")
     List<User> findUsersByTeamUser(Team team);
+ */
 }

@@ -14,8 +14,11 @@ services:
     ports:
       - "8085:8085"
     depends_on:
-      - eureka-server
       - mysql-db
+      - gateway
+      - eureka-server
+    networks:
+      - my-network
   user-ms:
     container_name: user-ms
     build:
@@ -29,8 +32,12 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - eureka-server
       - mysql-db
+      - gateway
+      - eureka-server
+    networks:
+      - my-network
+
   event-ms:
     container_name: event-ms
     build:
@@ -39,8 +46,11 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - eureka-server
       - h2-db
+      - gateway
+      - eureka-server
+    networks:
+      - my-network
   team-ms:
     container_name: team-ms
     build:
@@ -54,8 +64,11 @@ services:
     ports:
       - "8088:8088"
     depends_on:
-      - eureka-server
       - postgresql-db
+      - gateway
+      - eureka-server
+    networks:
+      - my-network
   eureka-server:
     container_name: eureka-server
     build:
@@ -65,6 +78,8 @@ services:
       - "8761:8761"
     depends_on:
       - h2-db
+    networks:
+      - my-network
   mysql-db:
     container_name: mysql-db
     image: mysql:5.6
@@ -73,6 +88,8 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: leavemsdb
+    networks:
+      - my-network
   mysql-db-1:
     container_name: mysql-db-1
     image: mysql:5.6
@@ -81,6 +98,8 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: users
+    networks:
+      - my-network
   h2-db:
     container_name: h2-db
     image: openjdk:17
@@ -88,6 +107,8 @@ services:
       - "8084:8084"
     environment:
       - SPRING_H2_CONSOLE_ENABLED=true
+    networks:
+      - my-network
   postgresql-db:
     container_name: postgresql-db
     image: postgres:latest
@@ -97,6 +118,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: saif9782536
       POSTGRES_DB: TeamDB
+    networks:
+      - my-network
   gateway:
     container_name: gateway
     build:
@@ -108,42 +131,8 @@ services:
       - "8086:8086"
     depends_on:
       - eureka-server
-  www_symfony:
-    build: ./ClaimMS
-    depends_on:
-      - postgresql
-      - eureka-server
-    container_name: www_symfony
-    restart: always
-    ports:
-      - '8000:8000'
-    dns:
-      - 8.8.8.8
-    volumes:
-      - ./:/var/www/
-    command: "symfony server:start"
     networks:
-      - rr-net
-
-
-  postgresql:
-    image: postgres:${POSTGRES_VERSION:-14}-alpine
-    container_name: postgresql_symfony
-    restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
-    ports:
-      - 5433:5432
-    volumes:
-      - db-data:/var/lib/postgresql/data:rw
-    networks:
-      - rr-net
+      - my-network
 networks:
-  rr-net:
+  my-network:
     driver: bridge
-
-volumes:
-  db-data:

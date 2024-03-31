@@ -1,6 +1,8 @@
 package com.leaveManagment.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,16 +38,22 @@ public class User {
     private Boolean isArchive = false ;
     private LocalDate archiveDate ;
     private int children;
-    @OneToMany(mappedBy = "user")
+    @ElementCollection
+    private List<Integer> leaveListIds;
+    @Transient
     @JsonIgnore
-    private List<Leave> leaves;
+    private List<Leave> leaveList;
+    @Transient
     @ManyToOne
-    @JsonIgnore
+    @JoinColumn(name = "team_id")
     private Team teamUser;
+    private Integer teamUserID;
     @OneToMany(mappedBy = "userClaim")
     @JsonIgnore
     private List<Claim> claim;
-    @OneToOne(mappedBy = "user")
-    @JsonIgnore
+    @Transient
+    @JoinColumn(name = "id_team")
     private Team team;
+    private Integer teamIdT;
+
 }

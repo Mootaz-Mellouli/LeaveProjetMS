@@ -1,12 +1,16 @@
 package com.leaveManagment.services.User;
 
+import com.leaveManagment.Feign.LeaveInterface;
+import com.leaveManagment.Feign.TeamInterface;
 import com.leaveManagment.config.JWTGenerator;
 import com.leaveManagment.dto.AuthResponseDTO;
 import com.leaveManagment.dto.LoginDTO;
 import com.leaveManagment.entities.Leave;
+import com.leaveManagment.entities.Team;
 import com.leaveManagment.entities.User;
 import com.leaveManagment.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,13 +42,22 @@ public class UserServiceImp implements IUserService {
 
     private final JWTGenerator jwtGenerator;
 
+    @Autowired
+    private TeamInterface teamInterface;
 
+    @Autowired
+    private LeaveInterface leaveInterface;
     @Value("${matricule.length}")
     private int matriculeLength;
     @Override
     public List<User> retrieveAllUsers() {
-        System.out.println(userRepository.findAllByIsArchiveFalse());
-        return userRepository.findAllByIsArchiveFalse();
+        List<User> users = userRepository.findAllByIsArchiveFalse();
+        List<User> usersWithTeams = new ArrayList<>();
+        for (User user : users) {
+            setUserTeam(user);
+            usersWithTeams.add(user);
+        }
+        return usersWithTeams;
     }
     @Override
     public User addUser(User u) {
@@ -62,16 +76,37 @@ public class UserServiceImp implements IUserService {
         // Set the user's matricule and encode the password
         u.setMatricule(generateMatricule());
         u.setPassword(passwordEncoder.encode(u.getPassword()));
-
+        updateTeamInformation(u);
         return userRepository.save(u);
     }
     @Override
     public User updateUser(User u) {
+        updateTeamInformation(u);
         return userRepository.save(u);
     }
+    private void updateTeamInformation(User u) {
+        if (u.getTeamUserID() != null) {
+            Optional<Team> teamUser = teamInterface.retrieveTeam(u.getTeamUserID());
+            if (teamUser.isPresent()) {
+                u.setTeamUserID(teamUser.get().getId());
+            }
+        } else {
+            u.setTeamUserID(null);
+        }
+        if (u.getTeam() != null) {
+            Optional<Team> team = teamInterface.retrieveTeam(u.getTeam().getId());
+            if (team.isPresent()) {
+                u.setTeamIdT(team.get().getId());
+            }
+        } else {
+            u.setTeamIdT(null);
+        }
+    }
     @Override
-    public User retrieveUser(String matricule) {
-        return userRepository.findUserByMatricule(matricule).orElse(null);
+    public Optional<User> retrieveUser(String matricule) {
+        Optional<User> optionalUser = userRepository.findUserByMatricule(matricule);
+        optionalUser.ifPresent(this::setUserTeam);
+        return optionalUser;
     }
     @Override
     public void deleteUser(String matricule) {
@@ -84,10 +119,14 @@ public class UserServiceImp implements IUserService {
     @Override
     public List<Leave> getLeavesByUser(String matricule) {
         User user = userRepository.findUserByMatricule(matricule).orElse(null);
-        Assert.notNull(user,"User must be not null");
-        List<Leave> leaves = new ArrayList<>();
-        user.getLeaves().forEach(leave -> leaves.add(leave) );
-        return leaves;
+        Assert.notNull(user, "User must not be null");
+
+        // Retrieve leaves for the user using the LeaveInterface
+        List<Leave> userLeaves = leaveInterface.getLeavesByUser(matricule);
+
+        // You may want to perform additional processing here if needed
+
+        return userLeaves;
     }
     public User getCurrentUser() {
         return ((User) SecurityContextHolder.getContext()
@@ -121,4 +160,36 @@ public class UserServiceImp implements IUserService {
 
         return matricule;
     }
+    private void setUserTeam(User user) {
+        // Check if user has a team associated
+        if (user.getTeamUserID() != null) {
+            Optional<Team> team = teamInterface.retrieveTeam(user.getTeamUserID());
+            // Set the team in the user if it exists
+            team.ifPresentOrElse(
+                    t -> user.setTeamUser(team.orElse(null)),
+                    () -> {
+                        // Handle case where team is not found
+                        System.out.println("TeamUser not found for user: " + user.getMatricule());
+                        // You can throw an exception, log an error, or handle it in another appropriate way
+                    }
+            );
+        }
+        if (user.getTeamIdT() != null) {
+            Optional<Team> team = teamInterface.retrieveTeam(user.getTeamIdT());
+            // Set the team in the user if it exists
+            team.ifPresentOrElse(
+                    t -> user.setTeam(team.orElse(null)),
+                    () -> {
+                        // Handle case where team is not found
+                        System.out.println("Team not found for user: " + user.getMatricule());
+                        // You can throw an exception, log an error, or handle it in another appropriate way
+                    }
+            );
+        }
+    }
+
+    /*@Override
+    public List<User> retrieveUsersByTeam(Integer teamId) {
+        return userRepository.findByTeamId(teamId); // Assuming findByTeamIdi() is a method in your repository
+    }*/
 }

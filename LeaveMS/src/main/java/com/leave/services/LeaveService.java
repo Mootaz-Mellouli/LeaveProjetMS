@@ -1,9 +1,11 @@
 package com.leave.services;
 
+import com.leave.Feign.UserInterface;
 import com.leave.entities.*;
 import com.leave.repositories.LeaveRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
@@ -12,20 +14,37 @@ import org.springframework.util.Assert;
 
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
 @EnableScheduling
 public class LeaveService {
     private final LeaveRepository leaveRepository;
-
+    @Autowired
+    UserInterface userInterface;
     public List<Leave> getAllLeaves() {
-        return leaveRepository.findAll();
+        List<Leave> leaves = leaveRepository.findAll();
+        for (Leave leave : leaves) {
+            Optional<User> optionalUser = userInterface.retrieveUser(leave.getMatriculeUser());
+            optionalUser.ifPresent(leave::setUser);
+        }
+        return leaves;
     }
     @SneakyThrows
     public Leave getLeaveById(int idLeave) {
         isLeaveArchived(idLeave);
-        return leaveRepository.findById(idLeave).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        Leave leave = leaveRepository.findById(idLeave).orElseThrow(ChangeSetPersister.NotFoundException::new);
+
+        // Retrieve user from UserMS using Feign Client
+        Optional<User> userOptional = userInterface.retrieveUser(leave.getMatriculeUser());
+        if (userOptional.isPresent()) {
+            leave.setUser(userOptional.get());
+        }
+
+        return leave;
     }
     /*@SneakyThrows
     public Leave addLeave(Leave leave, String matricule) {
@@ -52,17 +71,17 @@ public class LeaveService {
         }*//*
         return leaveRepository.save(leave);
     }*/
-   /* @SneakyThrows
+    @SneakyThrows
     public Leave updateLeave(Leave leave, String matricule) {
         isLeaveArchived(leave.getId());
-        //leave.getUser()
-        User user = userRepository.findUserByMatricule(matricule).orElse(null);
-        if (user != null) {
-            //leave.setLeavePriority(leave.getLeavePriority());
-            leave.setUser(leave.getUser());
+
+        Optional<User> userOptional = userInterface.retrieveUser(matricule);
+        if (userOptional.isPresent()) {
+            leave.setMatriculeUser(userOptional.get().getMatricule());
+            return leaveRepository.save(leave);
         }
-        return leaveRepository.save(leave);
-    }*/
+        return leave;
+    }
 
     public void deleteLeave(int idLeave) {
         Leave leave = leaveRepository.findById(idLeave).orElse(null);
@@ -72,20 +91,38 @@ public class LeaveService {
         }
     }
 
-    /*public List<Leave> getLeavesByUser(String matricule) {
-        User user = userRepository.findUserByMatricule(matricule).orElse(null);
+    public List<Leave> getLeavesByUser(String matricule) {
+        User user = userInterface.retrieveUser(matricule).orElse(null);
         if (user != null) {
-            return leaveRepository.getLeavesByUserAndIsArchivedIsFalse(user);
+            // Fetch all leaves for the user
+            List<Leave> allLeaves = getAllLeaves();
+
+            // Filter leaves based on whether they are archived or not
+            List<Leave> leaves = allLeaves.stream()
+                    .filter(leave -> !leave.isArchived() && leave.getUser().getMatricule().equals(matricule))
+                    .collect(Collectors.toList());
+
+            return leaves;
         }
         return null;
-    }*/
+    }
 
     public List<Leave> getAllLeavesNotArchived() {
-        return leaveRepository.getLeavesByIsArchivedIsFalse();
+        List<Leave> leaves = leaveRepository.getLeavesByIsArchivedIsFalse();
+        for (Leave leave : leaves) {
+            Optional<User> optionalUser = userInterface.retrieveUser(leave.getMatriculeUser());
+            optionalUser.ifPresent(leave::setUser);
+        }
+        return leaves;
     }
 
     public List<Leave> getArchivedLeaves() {
-        return leaveRepository.getLeavesByIsArchivedIsTrue();
+        List<Leave> leaves = leaveRepository.getLeavesByIsArchivedIsTrue();
+        for (Leave leave : leaves) {
+            Optional<User> optionalUser = userInterface.retrieveUser(leave.getMatriculeUser());
+            optionalUser.ifPresent(leave::setUser);
+        }
+        return leaves;
     }
 
     public void isLeaveArchived(int idLeave) throws Exception {

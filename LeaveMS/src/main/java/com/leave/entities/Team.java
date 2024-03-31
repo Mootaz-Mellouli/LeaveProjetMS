@@ -1,8 +1,6 @@
-package com.example.teamms.Entities;
+package com.leave.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,15 +23,13 @@ public class Team {
     private String description;
     private boolean archive;
     private Date createdOn;
-    @ElementCollection
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<String> userListIds;
     @OneToMany(mappedBy = "teamUser")
     @JsonIgnore
-    private List<Utilisateur> userList;
+    private List<User> userList;
+
     @OneToOne
     @JsonIgnore
-    private Utilisateur Utilisateur;
+    private User user;
 
     @OneToMany(mappedBy = "team")
     @JsonIgnore

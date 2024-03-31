@@ -1,5 +1,6 @@
 package com.example.teamms.Entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,9 @@ public class Leave {
     @Enumerated(EnumType.STRING)
     private LeaveType leaveType;
     @ManyToOne
+    @Transient
     private Utilisateur Utilisateur;
+    private String matriculeUser;
     private boolean isArchived;
     private LeavePriority leavePriority;
     private Boolean teamAvailability;
