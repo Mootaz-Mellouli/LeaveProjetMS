@@ -42,14 +42,14 @@ public class EventController {
 
     @PutMapping("/{eventid}/{teamid}")
     public void affectEventToTeam(@PathVariable("eventid") Integer eventid,@PathVariable("teamid") Integer teamid) {
-        //eventService.affectEventToTeam(eventid,teamid);
+        eventService.affectEventToTeam(eventid,teamid);
     }
     @PutMapping("/desaffectEventToTeam/{eventid}")
     public void desaffectEventToTeam(@PathVariable("eventid") Integer eventid) {
-        //eventService.desaffectEventFromTeam(eventid);
+        eventService.desaffectEventFromTeam(eventid);
     }
-    /*@GetMapping("/retrieveEventByTeam/{teamid}")
+    @GetMapping("/retrieveEventByTeam/{teamid}")
     public List<Event> retrieveEventByTeam(@PathVariable("teamid") Integer teamid) {
         return eventService.getEventByTeam(teamid);
-    }*/
+    }
 }
