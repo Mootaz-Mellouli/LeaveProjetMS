@@ -23,17 +23,18 @@ import java.util.stream.Collectors;
 @EnableScheduling
 public class LeaveService {
     private final LeaveRepository leaveRepository;
-    @Autowired
-    UserInterface userInterface;
+    /*@Autowired
+    UserInterface userInterface;*/
     public List<Leave> getAllLeaves() {
-        List<Leave> leaves = leaveRepository.findAll();
+        return leaveRepository.findAll();
+        /*List<Leave> leaves = leaveRepository.findAll();
         for (Leave leave : leaves) {
             Optional<User> optionalUser = userInterface.retrieveUser(leave.getMatriculeUser());
             optionalUser.ifPresent(leave::setUser);
         }
-        return leaves;
+        return leaves;*/
     }
-    @SneakyThrows
+    /*@SneakyThrows
     public Leave getLeaveById(int idLeave) {
         isLeaveArchived(idLeave);
         Leave leave = leaveRepository.findById(idLeave).orElseThrow(ChangeSetPersister.NotFoundException::new);
@@ -45,15 +46,17 @@ public class LeaveService {
         }
 
         return leave;
-    }
+    }*/
+
+
     /*@SneakyThrows
     public Leave addLeave(Leave leave, String matricule) {
         // TODO : number of days => demi-journéé actif seulement quand on choisit la meme date
         // ne7sbou ken wakt el type congé solde
-        *//*User user = userService.getCurrentUser2();
+        //User user = userService.getCurrentUser2();
         if ( user != null) {
             leave.setUser(user);
-        }*//*
+        }
         Boolean teamAvailability;
         User user = userRepository.findUserByMatricule(matricule).orElse(null);
         if (user != null) {
@@ -66,12 +69,13 @@ public class LeaveService {
         leave.setLeavePriority(getLeavePriority(leave.getLeaveType()));
         leave.setLeaveStatus(LeaveStatus.IN_PROGRESS);
 
-        *//*if (leave.getLeaveType() == LeaveType.CG_PAYE) {
+        if (leave.getLeaveType() == LeaveType.CG_PAYE) {
             leave.setLeavePriority(checkLeavePriorityCGPaye(user));
-        }*//*
+        }
         return leaveRepository.save(leave);
     }*/
-    @SneakyThrows
+
+   /* @SneakyThrows
     public Leave updateLeave(Leave leave, String matricule) {
         isLeaveArchived(leave.getId());
 
@@ -81,7 +85,7 @@ public class LeaveService {
             return leaveRepository.save(leave);
         }
         return leave;
-    }
+    }*/
 
     public void deleteLeave(int idLeave) {
         Leave leave = leaveRepository.findById(idLeave).orElse(null);
@@ -91,7 +95,7 @@ public class LeaveService {
         }
     }
 
-    public List<Leave> getLeavesByUser(String matricule) {
+    /*public List<Leave> getLeavesByUser(String matricule) {
         User user = userInterface.retrieveUser(matricule).orElse(null);
         if (user != null) {
             // Fetch all leaves for the user
@@ -105,25 +109,25 @@ public class LeaveService {
             return leaves;
         }
         return null;
-    }
+    }*/
 
-    public List<Leave> getAllLeavesNotArchived() {
+  /*  public List<Leave> getAllLeavesNotArchived() {
         List<Leave> leaves = leaveRepository.getLeavesByIsArchivedIsFalse();
         for (Leave leave : leaves) {
             Optional<User> optionalUser = userInterface.retrieveUser(leave.getMatriculeUser());
             optionalUser.ifPresent(leave::setUser);
         }
         return leaves;
-    }
+    }*/
 
-    public List<Leave> getArchivedLeaves() {
+    /*public List<Leave> getArchivedLeaves() {
         List<Leave> leaves = leaveRepository.getLeavesByIsArchivedIsTrue();
         for (Leave leave : leaves) {
             Optional<User> optionalUser = userInterface.retrieveUser(leave.getMatriculeUser());
             optionalUser.ifPresent(leave::setUser);
         }
         return leaves;
-    }
+    }*/
 
     public void isLeaveArchived(int idLeave) throws Exception {
         Leave leave = leaveRepository.findById(idLeave).orElse(null);
