@@ -47,6 +47,7 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team teamUser;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer teamUserID;
     @OneToMany(mappedBy = "userClaim")
     @JsonIgnore
@@ -54,6 +55,7 @@ public class User {
     @Transient
     @JoinColumn(name = "id_team")
     private Team team;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer teamIdT;
 
 }

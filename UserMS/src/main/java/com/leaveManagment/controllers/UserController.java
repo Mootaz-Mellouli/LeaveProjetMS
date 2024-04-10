@@ -14,7 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     private final IUserService iUserService;

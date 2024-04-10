@@ -25,9 +25,6 @@ public class Team {
     private String description;
     private boolean archive;
     private Date createdOn;
-    @ElementCollection
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<String> userListIds;
     @OneToMany(mappedBy = "teamUser")
     @JsonIgnore
     private List<Utilisateur> userList;

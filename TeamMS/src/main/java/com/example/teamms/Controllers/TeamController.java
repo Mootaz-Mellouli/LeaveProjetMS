@@ -3,20 +3,25 @@ package com.example.teamms.Controllers;
 import com.example.teamms.Entities.Leave;
 import com.example.teamms.Entities.Team;
 import com.example.teamms.Services.ITeamService;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/team")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TeamController {
     private final ITeamService teamService;
     @GetMapping()
-    public List<Team> retrieveAllTeams (){
+    public List<Team> retrieveAllTeams (Principal principal){
         return teamService.retrieveAllTeams();
     }
 
@@ -27,7 +32,6 @@ public class TeamController {
 
     @PostMapping()
     public void addTeam(@RequestBody Team team) {
-
         teamService.addTeam(team);
     }
 
