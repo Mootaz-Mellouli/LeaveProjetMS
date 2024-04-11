@@ -26,12 +26,21 @@ WORKDIR /var/www
 # Remove the default index.html file Apache2 places in the html directory
 RUN rm -rf /var/www/html
 
+# Enable Apache mod_rewrite for URL rewriting
+RUN a2enmod rewrite
+
 # Install Symfony CLI
 RUN curl -sS https://get.symfony.com/cli/installer | bash
 RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www
+
+# Copy the Symfony application into the Docker image
+COPY . /var/www/html/
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Change current user to www
 USER www-data
