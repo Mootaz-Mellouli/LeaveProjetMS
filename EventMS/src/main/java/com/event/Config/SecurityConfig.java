@@ -32,6 +32,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/team/**","/user/**","/leave/**","/claim/**")
                 .permitAll()
+                .requestMatchers(AUTH_WHITELIST)
+                .permitAll()
                 .anyRequest()
                 .authenticated();
 
@@ -46,4 +48,15 @@ public class SecurityConfig {
 
         return http.build();
     }
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/**",
+            "/swagger-ui/**"
+    };
 }
