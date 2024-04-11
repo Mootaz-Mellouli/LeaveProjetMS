@@ -12,4 +12,5 @@ public class EventMsApplication {
         SpringApplication.run(EventMsApplication.class, args);
     }
 
+
 }

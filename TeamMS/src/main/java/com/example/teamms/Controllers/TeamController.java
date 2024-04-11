@@ -21,6 +21,7 @@ import java.util.Optional;
 public class TeamController {
     private final ITeamService teamService;
     @GetMapping()
+    @PreAuthorize("hasRole('client_user')")
     public List<Team> retrieveAllTeams (Principal principal){
         return teamService.retrieveAllTeams();
     }
@@ -36,6 +37,7 @@ public class TeamController {
     }
 
     @PutMapping()
+    @PreAuthorize("hasRole('client_admin')")
     public Team updateTeam(@RequestBody Team team) {
         return teamService.updateTeam(team);
     }

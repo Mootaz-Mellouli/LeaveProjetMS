@@ -1,4 +1,4 @@
-package com.example.gateway;
+package com.example.teamms.Config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +24,8 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
+                .requestMatchers("/event/*")
+                .permitAll()
                 .anyRequest()
                 .authenticated();
 

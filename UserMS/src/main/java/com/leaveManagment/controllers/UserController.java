@@ -20,9 +20,11 @@ public class UserController {
     private final IUserService iUserService;
 
     @GetMapping()
+    @PreAuthorize("hasRole('client_user')")
     public List<User> retrieveAllUsers (){return iUserService.retrieveAllUsers();}
 
     @GetMapping("/{matricule-id}")
+    @PreAuthorize("hasRole('client_admin')")
     public Optional<User> retrieveUser(@PathVariable("matricule-id") String matricule) { return iUserService.retrieveUser(matricule);}
 
     //@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")

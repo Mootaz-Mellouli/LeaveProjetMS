@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final IUserService iUserService;
+    /*
     @PostMapping("login")
     public AuthResponseDTO login(@RequestBody LoginDTO loginDTO)  {
         return iUserService.loginUser(loginDTO);
     }
+
+     */
 }

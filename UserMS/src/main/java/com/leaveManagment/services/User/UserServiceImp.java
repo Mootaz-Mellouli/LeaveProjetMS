@@ -2,7 +2,6 @@ package com.leaveManagment.services.User;
 
 import com.leaveManagment.Feign.LeaveInterface;
 import com.leaveManagment.Feign.TeamInterface;
-import com.leaveManagment.config.JWTGenerator;
 import com.leaveManagment.dto.AuthResponseDTO;
 import com.leaveManagment.dto.LoginDTO;
 import com.leaveManagment.entities.Leave;
@@ -40,7 +39,7 @@ public class UserServiceImp implements IUserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final JWTGenerator jwtGenerator;
+    //private final JWTGenerator jwtGenerator;
 
     @Autowired
     private TeamInterface teamInterface;
@@ -133,7 +132,7 @@ public class UserServiceImp implements IUserService {
                 .getAuthentication()
                 .getPrincipal());
     }
-    @Override
+    /*@Override
     public AuthResponseDTO loginUser(LoginDTO loginDTO) {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -144,7 +143,7 @@ public class UserServiceImp implements IUserService {
             String token = jwtGenerator.generateToken(authentication);
             User user = userRepository.findUserByMatricule(loginDTO.getMatricule()).orElse(null);
             return new AuthResponseDTO(user ,token);
-    }
+    }*/
     @Scheduled(cron = "0 0 0 * * *") // Exécuter une fois par jour à minuit
     public void performAutoDelete() {
         LocalDate oneYearAgo = LocalDate.now().minusYears(1);

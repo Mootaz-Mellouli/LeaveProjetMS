@@ -19,7 +19,7 @@ public interface IUserService {
 
     void deleteUser(String matricule);
     List<Leave> getLeavesByUser(String matricule);
-    AuthResponseDTO loginUser(LoginDTO loginDTO);
+    //AuthResponseDTO loginUser(LoginDTO loginDTO);
     User getCurrentUser();
     //List<User> retrieveUsersByTeam(Integer teamId);
 }
