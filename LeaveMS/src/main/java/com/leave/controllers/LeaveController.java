@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class LeaveController {
 
     @Operation(summary = "Get all leaves", description = "Retrieve all leaves")
     @GetMapping("/all")
+    @PreAuthorize("hasRole('client_admin')")
     public List<Leave> getAllLeaves() {
         return leaveService.getAllLeaves();
     }
@@ -38,36 +40,42 @@ public class LeaveController {
 
     @Operation(summary = "Add a leave", description = "Add a new leave for a user")
     @PostMapping("/add/{matricule}")
+    @PreAuthorize("hasAnyRole('client_admin','client_user')")
     public Leave addLeave(@RequestBody Leave leave, @PathVariable String matricule) {
         return leaveService.addLeave(leave, matricule);
     }
 
     @Operation(summary = "Update a leave", description = "Update an existing leave")
     @PutMapping("/update/{matricule}")
+    @PreAuthorize("hasAnyRole('client_admin','client_user')")
     public Leave updateLeave(@RequestBody Leave leave, @PathVariable String matricule) {
         return leaveService.updateLeave(leave, matricule);
     }
 
     @Operation(summary = "Delete a leave", description = "Delete a leave by its ID")
     @DeleteMapping("/delete/{idLeave}")
+    @PreAuthorize("hasAnyRole('client_admin','client_user')")
     public void deleteLeave(@PathVariable int idLeave) {
         leaveService.deleteLeave(idLeave);
     }
 
     @Operation(summary = "Get all leaves not archived", description = "Retrieve all leaves that are not archived")
     @GetMapping
+    @PreAuthorize("hasAnyRole('client_admin')")
     public List<Leave> getAllLeavesNotArchived() {
         return leaveService.getAllLeavesNotArchived();
     }
 
     @Operation(summary = "Get archived leaves", description = "Retrieve all archived leaves")
     @GetMapping("/archived")
+    @PreAuthorize("hasAnyRole('client_admin')")
     public List<Leave> getArchivedLeaves() {
         return leaveService.getArchivedLeaves();
     }
 
     @Operation(summary = "Get leaves by user", description = "Retrieve leaves for a specific user")
     @GetMapping("/me/{matricule}")
+    @PreAuthorize("hasAnyRole('client_admin','client_user')")
     public List<Leave> getLeavesByUser(@PathVariable String matricule) {
         return leaveService.getLeavesByUser(matricule);
     }
