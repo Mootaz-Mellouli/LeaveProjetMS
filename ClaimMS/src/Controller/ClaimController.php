@@ -18,12 +18,15 @@ class ClaimController extends AbstractController
     {
         $client = new EurekaClient([
             'eurekaDefaultUrl' => 'http://eureka-server:8761/eureka',
-            'hostName' => 'www_symfony',
+            'hostName' => 'eureka-server',
             'appName' => 'ClaimMS',
             'ip' => '127.0.0.1',
             'port' => ['8000', true]
         ]);
+        $client->getConfig()->setHeartbeatInterval(5);
+        //$client->start();
         $client->register();
+        $client->heartbeat();
         return $this->json([
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/ClaimController.php',
