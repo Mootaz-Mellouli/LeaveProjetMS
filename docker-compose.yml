@@ -81,7 +81,7 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
       - DATABASE_URL=postgresql://mootaz@database:5432/claimdb
     ports:
-      - "8084:8084"
+      - "8079:8084"
     depends_on:
       - postgresql-db-2
       - gateway
@@ -173,6 +173,43 @@ services:
       - eureka-server
     networks:
       - my-network
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycl0ak
+      POSTGRES_USER: keycl0ak
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5431:5431
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.1
+   
+    command:
+      - "-b 0.0.0.0 -Dkeycloak.import=./keycloak.json"
+      - start-dev
+      - --import-realm
+      - -Dkeycloak.migration.realmName
+    volumes:
+      - ./keycloack.json:/opt/keycloak/data/import/realm.json
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycl0ak
+      DB_USER: keycl0ak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: administrat0r
+      KEYCLOAK_PASSWORD: asc88a8c0ssssqs
+    ports:
+      - 9090:8080
+    depends_on:
+      - postgres
+
+volumes:
+    postgres_data:
+      driver: local
 networks:
   my-network:
     driver: bridge
