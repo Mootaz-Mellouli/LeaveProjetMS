@@ -10,7 +10,20 @@ class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
 
-    public function eurekaClient(): void
+   /* public function boot(): void
+    {
+
+        $client = new EurekaClient([
+            'eurekaDefaultUrl' => 'http://localhost:8761/eureka',
+            'hostName' => 'localhost',
+            'appName' => 'ClaimMS',
+            'ip' => '127.0.0.1',
+            'port' => ['8000', true]
+        ]);
+        $client->start();
+        //parent::boot();
+    }*/
+    /*public function registerBundles()
     {
         $client = new EurekaClient([
             'eurekaDefaultUrl' => 'http://localhost:8761/eureka',
@@ -20,6 +33,7 @@ class Kernel extends BaseKernel
             'port' => ['8000', true]
         ]);
         $client->start();
-    }
+
+    }*/
 
 }

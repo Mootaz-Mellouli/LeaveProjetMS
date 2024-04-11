@@ -1,25 +1,40 @@
-FROM php:8.1-fpm-alpine
+# Use an official PHP runtime as a parent image
+FROM php:8.0-apache
 
-# Install dépeencies
-RUN set -ex \
-  && apk --no-cache add \
-    postgresql-dev
+# Install system dependencies
+RUN apt-get update && apt-get install -y  zlib1g-dev
+RUN apt-get update && apt-get install -y  libzip-dev
+RUN apt-get update && apt-get install -y  libpq-dev
+RUN apt-get update && apt-get install -y  git
+RUN apt-get update && apt-get install -y  curl
 
-RUN docker-php-ext-install pdo pdo_pgsql
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN docker-php-ext-install pdo_mysql zip exif pcntl pdo_pgsql
 
-RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
-    install-php-extensions http
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Set working directory
+WORKDIR /var/www
 
-RUN apk --no-cache update && apk --no-cache add bash && apk --no-cache add git
-
-# Install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php && php -r "unlink('composer-setup.php');" && mv composer.phar /usr/local/bin/composer
+# Remove the default index.html file Apache2 places in the html directory
+RUN rm -rf /var/www/html
 
 # Install Symfony CLI
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash && apk add symfony-cli
+RUN curl -sS https://get.symfony.com/cli/installer | bash
+RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
-WORKDIR /var/www/
+# Copy existing application directory permissions
+COPY --chown=www-data:www-data . /var/www
+
+# Change current user to www
+USER www-data
+
+# Expose port 80
+EXPOSE 80
+
+# Start the server
+CMD ["apache2-foreground"]

@@ -1,4 +1,4 @@
-version: "2.2"
+
 services:
 
   leave-ms:
@@ -69,6 +69,25 @@ services:
       - eureka-server
     networks:
       - my-network
+  claim-ms:
+    container_name: claim-ms
+    build:
+      context: ./ClaimMS
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www
+      - /var/www/var
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - DATABASE_URL=postgresql://mootaz@database:5432/claimdb
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgresql-db-2
+      - gateway
+      - eureka-server
+    networks:
+      - my-network
   eureka-server:
     container_name: eureka-server
     build:
@@ -118,6 +137,17 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: saif9782536
       POSTGRES_DB: TeamDB
+    networks:
+      - my-network
+  postgresql-db-2:
+    container_name: postgresql-db-2
+    image: postgres:latest
+    ports:
+      - "5430:5432"
+    environment:
+      POSTGRES_USER: mootaz
+      POSTGRES_PASSWORD:
+      POSTGRES_DB: claimdb
     networks:
       - my-network
   mongo-db:
