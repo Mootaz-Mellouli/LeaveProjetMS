@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.Date;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="conge")
+@Document(collection = "Conge")
 public class Leave {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

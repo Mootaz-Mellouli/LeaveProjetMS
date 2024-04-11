@@ -7,14 +7,14 @@ services:
       context: ./LeaveMS
       dockerfile: Dockerfile
     environment:
-        - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
-        - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/leavemsdb?createDatabaseIfNotExist=true
-        - SPRING_DATASOURCE_USERNAME=root
-        - SPRING_DATASOURCE_PASSWORD=
+      - eureka.client.serviceUrl.defaultZone=http://eureka-server:8761/eureka/
+      - SPRING_DATA_MONGODB_DATABASE=conge-db
+      - SPRING_DATA_MONGODB_HOST=mongo-db
+      - SPRING_DATA_MONGODB_PORT=27017
     ports:
       - "8085:8085"
     depends_on:
-      - mysql-db
+      - mongo-db
       - gateway
       - eureka-server
     networks:
@@ -118,6 +118,16 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: saif9782536
       POSTGRES_DB: TeamDB
+    networks:
+      - my-network
+  mongo-db:
+    container_name: mongo-db
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_DATABASE=conge-db
+      
     networks:
       - my-network
   gateway:
