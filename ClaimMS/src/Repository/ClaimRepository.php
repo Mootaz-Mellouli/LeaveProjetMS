@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Claim;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,10 +18,26 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ClaimRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $manager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $manager)
     {
         parent::__construct($registry, Claim::class);
+        $this->manager = $manager;
     }
+
+public function saveClaim($description, $claimDate, $feedBack, $matriculeClient): void
+{
+    $newCustomer = new Claim();
+
+    $newCustomer
+        ->setDescription($description)
+        ->setClaimDate($claimDate)
+        ->setFeedBackEmployee($feedBack)
+        ->setMatriculeClient($matriculeClient);
+
+    $this->manager->persist($newCustomer);
+    $this->manager->flush();
+}
 
 //    /**
 //     * @return Claim[] Returns an array of Claim objects
@@ -45,4 +63,5 @@ class ClaimRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
 }

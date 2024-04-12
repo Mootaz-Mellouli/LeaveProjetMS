@@ -26,6 +26,9 @@ class Claim
     #[ORM\Column(nullable: true)]
     private ?bool $FeedBackEmployee = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $matriculeClient;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -66,4 +69,15 @@ class Claim
 
         return $this;
     }
+
+    public function getMatriculeClient(): string
+    {
+        return $this->matriculeClient;
+    }
+
+    public function setMatriculeClient(string $matriculeClient): void
+    {
+        $this->matriculeClient = $matriculeClient;
+    }
+
 }

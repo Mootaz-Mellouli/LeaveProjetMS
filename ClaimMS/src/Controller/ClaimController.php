@@ -2,18 +2,27 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Repository\ClaimRepository;
 use Eureka\EurekaClient;
 use Eureka\Exceptions\RegisterFailureException;
+use http\Client\Request;
+use http\Client\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ClaimController extends AbstractController
 {
+    private $claimRepo;
+
     public function __construct(
         private HttpClientInterface $client,
+        ClaimRepository $claimRepository
     ) {
+        $this->claimRepo = $claimRepository;
     }
 
     /**
@@ -39,8 +48,10 @@ class ClaimController extends AbstractController
         ]);
     }
 
-    public function getClaimsNotArchivedByUser(): array
+    #[Route('/claim/token', name: 'token', methods: ['GET'])]
+    public function getJwtToken(): array
     {
+
         /*$this->client = $client->withOptions(
             (new HttpOptions())
                 ->setBaseUri('https://...')
@@ -49,19 +60,52 @@ class ClaimController extends AbstractController
         );*/
         $response = $this->client->request(
             'GET',
-            'https://api.github.com/repos/symfony/symfony-docs'
+            ''
         );
 
         $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        $contentType = $response->getHeaders()['content-type'][0];
-        // $contentType = 'application/json'
-        $content = $response->getContent();
+        $user = $response->getContent();
         // $content = '{"id":521583, "name":"symfony-docs", ...}'
         $content = $response->toArray();
         // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
 
         return $content;
+    }
+    #[Route('/claim/add', name: 'addClaim', methods: ['POST'])]
+    public function add(Request $request): JsonResponse
+    {
+        $user = new User();
+        // add token to request
+        /*$this->client = $client->withOptions(
+            (new HttpOptions())
+                ->setBaseUri('https://...')
+                ->setHeaders(['header-name' => 'header-value'])
+                ->toArray()
+        );*/
+        // get user
+        $response = $this->client->request(
+            'GET',
+            ''
+        );
+
+        $statusCode = $response->getStatusCode();
+        // get User data
+        //$user = $response->getContent();
+
+    $data = json_decode($request->getContent(), true);
+
+    $description = $data['description'];
+    $claimDate = $data['claimDate'];
+    $feedBack = $data['feedBack'];
+    //$matriculeClient = $user->getMatricule();
+
+    /*if (empty($description) || empty($claimDate) || empty($feedBack) ) {
+        throw new NotFoundHttpException('Expecting mandatory parameters!');
+    }*/
+
+    $this->claimRepo->saveClaim($description, $claimDate, $feedBack, 'test');
+
+    return new JsonResponse(['status' => 'Customer created!']);
     }
 
 
