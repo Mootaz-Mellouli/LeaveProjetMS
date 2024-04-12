@@ -32,4 +32,5 @@ public class Leave {
     private String matriculeUser;
     private boolean isArchived;
     private boolean teamAvailability;
+    private ClaimPriority leavePriority;
 }

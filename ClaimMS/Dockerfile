@@ -14,8 +14,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql zip exif pcntl pdo_pgsql
 
-RUN wget https://getcomposer.org/download/2.0.9/composer.phar \
-    && mv composer.phar /usr/bin/composer && chmod +x /usr/bin/compose
+#COPY docker/apache.conf /etc/apache2/sites-enabled/000-default.conf
+
+RUN curl -sS https://getcomposer.org/download/2.0.9/composer.phar -o composer.phar && mv composer.phar /usr/bin/composer && chmod +x /usr/bin/composer
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -41,12 +42,15 @@ COPY . /var/www/html/
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
+RUN symfony server:start -d
 # Change current user to www
 USER www-data
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8079
 
 # Start the server
+
 CMD ["apache2-foreground"]
+CMD ["symfony.exe"]
+
